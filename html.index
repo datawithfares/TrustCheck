@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TrustCheck — مُعين | نظام التحقق الذكي من أرقام الهاتف</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+  <style>
+    :root{
+      --bg-start: #0f172a;
+      --bg-end: #5b21b6;
+      --card-bg: #ffffff;
+      --accent: #7c3aed;
+      --accent-light: #a78bfa;
+      --muted: #6b7280;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --info: #3b82f6;
+    }
+    
+    *{box-sizing:border-box;margin:0;padding:0}
+    
+    html{scroll-behavior:smooth}
+    
+    body{
+      font-family:'Tajawal',sans-serif;
+      background:linear-gradient(135deg,var(--bg-start) 0%, #1e1b4b 50%, var(--bg-end) 100%);
+      color:#0b1220;
+      min-height:100vh;
+      position:relative;
+      overflow-x:hidden;
+    }
+    
+    body::before{
+      content:'';
+      position:fixed;
+      width:100%;
+      height:100%;
+      background-image:
+        radial-gradient(circle at 20% 30%, rgba(124, 58, 237, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 40% 80%, rgba(167, 139, 250, 0.06) 0%, transparent 50%);
+      animation:float 20s ease-in-out infinite;
+      z-index:0;
+      pointer-events:none;
+    }
+    
+    @keyframes float{
+      0%,100%{transform:translateY(0px) scale(1)}
+      50%{transform:translateY(-30px) scale(1.05)}
+    }
+    
+    .wrap{
+      max-width:1400px;
+      margin:0 auto;
+      padding:20px;
+      position:relative;
+      z-index:1;
+    }
+    
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:30px;
+      padding:24px 32px;
+      background:linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+      border-radius:20px;
+      box-shadow:0 12px 40px rgba(2,6,23,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+      backdrop-filter:blur(12px);
+      border:1px solid rgba(255,255,255,0.08);
+      margin-bottom:40px;
+      animation:slideDown 0.6s ease-out;
+    }
+    
+    @keyframes slideDown{
+      from{opacity:0;transform:translateY(-30px)}
+      to{opacity:1;transform:translateY(0)}
+    }
+    
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:20px;
+    }
+    
+    .logo-container{
+      position:relative;
+      width:80px;
+      height:80px;
+    }
+    
+    .logo-svg{
+      width:100%;
+      height:100%;
+      filter:drop-shadow(0 4px 12px rgba(124, 58, 237, 0.4));
+      animation:pulse 3s ease-in-out infinite;
+    }
+    
+    @keyframes pulse{
+      0%,100%{transform:scale(1)}
+      50%{transform:scale(1.05)}
+    }
+    
+    .brand-text{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    
+    .brand-title{
+      font-size:28px;
+      font-weight:900;
+      background:linear-gradient(135deg, #fff, #e9d5ff);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
+      letter-spacing:-0.5px;
+    }
+    
+    .brand-sub{
+      font-size:14px;
+      color:rgba(255,255,255,0.8);
+      font-weight:500;
+    }
+    
+    .header-right{
+      text-align:left;
+      padding:12px 20px;
+      background:rgba(124, 58, 237, 0.15);
+      border-radius:12px;
+      border:1px solid rgba(124, 58, 237, 0.3);
+    }
+    
+    .supervisor-name{
+      font-weight:900;
+      color:#fff;
+      font-size:18px;
+      margin-bottom:4px;
+    }
+    
+    .supervisor-title{
+      font-size:13px;
+      color:rgba(255,255,255,0.85);
+      font-weight:400;
+    }
+    
+    .hero{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:50px;
+      align-items:center;
+      padding:60px 20px;
+      margin-bottom:40px;
+    }
+    
+    .hero-left{
+      animation:fadeInRight 0.8s ease-out;
+    }
+    
+    @keyframes fadeInRight{
+      from{opacity:0;transform:translateX(-50px)}
+      to{opacity:1;transform:translateX(0)}
+    }
+    
+    .hero h1{
+      font-size:52px;
+      font-weight:900;
+      line-height:1.2;
+      margin-bottom:20px;
+      background:linear-gradient(135deg, #fff 0%, #e9d5ff 100%);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
+    }
+    
+    .hero-subtitle{
+      font-size:20px;
+      color:rgba(255,255,255,0.9);
+      line-height:1.8;
+      margin-bottom:30px;
+      font-weight:400;
+    }
+    
+    .features-grid{
+      display:grid;
+      grid-template-columns:repeat(2, 1fr);
+      gap:16px;
+      margin-top:30px;
+    }
+    
+    .feature-item{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:14px;
+      background:rgba(255,255,255,0.05);
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,0.1);
+      transition:all 0.3s ease;
+    }
+    
+    .feature-item:hover{
+      background:rgba(124, 58, 237, 0.15);
+      border-color:rgba(124, 58, 237, 0.4);
+      transform:translateX(-5px);
+    }
+    
+    .feature-icon{
+      width:40px;
+      height:40px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:linear-gradient(135deg, var(--accent), #6366f1);
+      border-radius:10px;
+      color:white;
+      font-size:18px;
+      flex-shrink:0;
+    }
+    
+    .feature-text{
+      color:rgba(255,255,255,0.95);
+      font-size:15px;
+      font-weight:500;
+    }
+    
+    .search-container{
+      animation:fadeInLeft 0.8s ease-out;
+    }
+    
+    @keyframes fadeInLeft{
+      from{opacity:0;transform:translateX(50px)}
+      to{opacity:1;transform:translateX(0)}
+    }
+    
+    .card{
+      background:linear-gradient(135deg, rgba(255,255,255,0.98), rgba(255,255,255,0.95));
+      border-radius:24px;
+      padding:32px;
+      box-shadow:0 20px 60px rgba(2,6,23,0.4), 0 0 0 1px rgba(124,58,237,0.1);
+      position:relative;
+      overflow:hidden;
+    }
+    
+    .card::before{
+      content:'';
+      position:absolute;
+      top:0;
+      left:0;
+      right:0;
+      height:4px;
+      background:linear-gradient(90deg, var(--accent), #6366f1, var(--accent-light));
+      background-size:200% 100%;
+      animation:shimmer 3s linear infinite;
+    }
+    
+    @keyframes shimmer{
+      0%{background-position:200% 0}
+      100%{background-position:-200% 0}
+    }
+    
+    .search-label{
+      font-size:20px;
+      font-weight:800;
+      color:#1e293b;
+      margin-bottom:16px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    
+    .search-label i{
+      color:var(--accent);
+    }
+    
+    .input-wrapper{
+      position:relative;
+      margin-bottom:16px;
+    }
+    
+    .input-icon{
+      position:absolute;
+      right:16px;
+      top:50%;
+      transform:translateY(-50%);
+      color:var(--muted);
+      font-size:20px;
+      pointer-events:none;
+    }
+    
+    .big-input{
+      width:100%;
+      padding:18px 50px 18px 18px;
+      border-radius:14px;
+      border:2px solid #e2e8f0;
+      font-size:18px;
+      font-family:'Tajawal',sans-serif;
+      outline:none;
+      transition:all 0.3s ease;
+      background:white;
+    }
+    
+    .big-input:focus{
+      border-color:var(--accent);
+      box-shadow:0 0 0 4px rgba(124, 58, 237, 0.1);
+      transform:translateY(-2px);
+    }
+    
+    .hint{
+      font-size:13px;
+      color:var(--muted);
+      margin-bottom:20px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:10px;
+      background:rgba(124, 58, 237, 0.05);
+      border-radius:8px;
+    }
+    
+    .hint i{
+      color:var(--accent);
+    }
+    
+    .btn{
+      width:100%;
+      background:linear-gradient(135deg, var(--accent), #6366f1);
+      color:white;
+      padding:16px 24px;
+      border-radius:12px;
+      border:none;
+      font-weight:800;
+      font-size:18px;
+      cursor:pointer;
+      box-shadow:0 10px 30px rgba(124, 58, 237, 0.3);
+      transition:all 0.3s ease;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      font-family:'Tajawal',sans-serif;
+    }
+    
+    .btn:hover{
+      transform:translateY(-3px);
+      box-shadow:0 15px 40px rgba(124, 58, 237, 0.4);
+    }
+    
+    .btn:active{
+      transform:translateY(-1px);
+    }
+    
+    .stats-section{
+      display:grid;
+      grid-template-columns:repeat(4, 1fr);
+      gap:20px;
+      margin:40px 0;
+      animation:fadeInUp 0.8s ease-out 0.2s both;
+    }
+    
+    @keyframes fadeInUp{
+      from{opacity:0;transform:translateY(30px)}
+      to{opacity:1;transform:translateY(0)}
+    }
+    
+    .stat-card{
+      background:linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+      backdrop-filter:blur(10px);
+      border-radius:16px;
+      padding:24px;
+      border:1px solid rgba(255,255,255,0.1);
+      text-align:center;
+      transition:all 0.3s ease;
+    }
+    
+    .stat-card:hover{
+      transform:translateY(-5px);
+      border-color:rgba(124, 58, 237, 0.4);
+      background:linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(124, 58, 237, 0.05));
+    }
+    
+    .stat-icon{
+      width:60px;
+      height:60px;
+      margin:0 auto 16px;
+      background:linear-gradient(135deg, var(--accent), #6366f1);
+      border-radius:16px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:28px;
+      color:white;
+      box-shadow:0 8px 20px rgba(124, 58, 237, 0.3);
+    }
+    
+    .stat-number{
+      font-size:32px;
+      font-weight:900;
+      color:white;
+      margin-bottom:8px;
+    }
+    
+    .stat-label{
+      font-size:14px;
+      color:rgba(255,255,255,0.8);
+      font-weight:500;
+    }
+    
+    .results{
+      margin-top:24px;
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+      max-height:500px;
+      overflow-y:auto;
+      padding:4px;
+    }
+    
+    .results::-webkit-scrollbar{
+      width:8px;
+    }
+    
+    .results::-webkit-scrollbar-track{
+      background:rgba(0,0,0,0.05);
+      border-radius:10px;
+    }
+    
+    .results::-webkit-scrollbar-thumb{
+      background:var(--accent);
+      border-radius:10px;
+    }
+    
+    .result-card{
+      background:linear-gradient(135deg, #ffffff, #fefeff);
+      border-radius:16px;
+      padding:20px;
+      border-right:5px solid var(--accent);
+      box-shadow:0 10px 30px rgba(2,6,23,0.08);
+      transition:all 0.3s ease;
+      animation:slideIn 0.4s ease-out;
+    }
+    
+    @keyframes slideIn{
+      from{opacity:0;transform:translateX(30px)}
+      to{opacity:1;transform:translateX(0)}
+    }
+    
+    .result-card:hover{
+      transform:translateY(-3px);
+      box-shadow:0 15px 40px rgba(2,6,23,0.12);
+    }
+    
+    .result-card.notfound{
+      border-right-color:#94a3b8;
+      background:linear-gradient(135deg, #fffbeb, #fef3c7);
+    }
+    
+    .result-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:15px;
+      margin-bottom:16px;
+      flex-wrap:wrap;
+    }
+    
+    .num{
+      font-weight:800;
+      font-size:18px;
+      color:#0f172a;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex:1;
+    }
+    
+    .num i{
+      color:var(--accent);
+    }
+    
+    .normalized{
+      font-size:14px;
+      color:#64748b;
+      font-weight:600;
+      background:rgba(124, 58, 237, 0.08);
+      padding:4px 10px;
+      border-radius:6px;
+    }
+    
+    .status{
+      font-size:13px;
+      padding:8px 16px;
+      border-radius:20px;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:0.5px;
+      display:flex;
+      align-items:center;
+      gap:6px;
+    }
+    
+    .status.bad{
+      background:linear-gradient(135deg, #fee2e2, #fecaca);
+      color:#991b1b;
+      border:1px solid #fca5a5;
+    }
+    
+    .status.warn{
+      background:linear-gradient(135deg, #fef3c7, #fde68a);
+      color:#92400e;
+      border:1px solid #fbbf24;
+    }
+    
+    .status.ok{
+      background:linear-gradient(135deg, #d1fae5, #a7f3d0);
+      color:#065f46;
+      border:1px solid #6ee7b7;
+    }
+    
+    .note{
+      font-size:15px;
+      color:#475569;
+      line-height:1.7;
+      padding:14px;
+      background:rgba(124, 58, 237, 0.03);
+      border-radius:10px;
+      margin:12px 0;
+      border-right:3px solid var(--accent);
+    }
+    
+    .note strong{
+      color:#1e293b;
+      display:block;
+      margin-bottom:6px;
+    }
+    
+    .meta{
+      font-size:13px;
+      color:#94a3b8;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding-top:12px;
+      border-top:1px solid #e2e8f0;
+    }
+    
+    .meta i{
+      color:var(--accent);
+    }
+    
+    .report-box{
+      margin-top:20px;
+      padding:20px;
+      background:linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(16, 185, 129, 0.03));
+      border-radius:14px;
+      border:2px solid rgba(16, 185, 129, 0.2);
+    }
+    
+    .report-title{
+      font-weight:800;
+      color:#065f46;
+      margin-bottom:12px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-size:16px;
+    }
+    
+    .report-list{
+      font-size:14px;
+      color:#047857;
+      line-height:1.9;
+      margin:12px 0;
+      padding-right:20px;
+    }
+    
+    .report-list li{
+      margin-bottom:8px;
+      position:relative;
+      padding-right:20px;
+    }
+    
+    .report-list li::before{
+      content:'✓';
+      position:absolute;
+      right:0;
+      color:#10b981;
+      font-weight:900;
+    }
+    
+    .report-btn{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      background:#25D366;
+      color:white;
+      padding:14px 24px;
+      border-radius:12px;
+      text-decoration:none;
+      font-weight:800;
+      font-size:15px;
+      box-shadow:0 8px 20px rgba(37, 211, 102, 0.3);
+      transition:all 0.3s ease;
+      margin-top:12px;
+    }
+    
+    .report-btn:hover{
+      transform:translateY(-3px);
+      box-shadow:0 12px 30px rgba(37, 211, 102, 0.4);
+    }
+    
+    .report-btn i{
+      font-size:20px;
+    }
+    
+    .about{
+      margin:60px 0;
+      padding:50px;
+      border-radius:24px;
+      background:linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,0.1);
+      animation:fadeInUp 0.8s ease-out 0.4s both;
+    }
+    
+    .about h2{
+      font-size:36px;
+      font-weight:900;
+      margin-bottom:24px;
+      background:linear-gradient(135deg, #fff, #e9d5ff);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
+    }
+    
+    .about-content{
+      color:rgba(255,255,255,0.9);
+      line-height:1.9;
+      font-size:17px;
+    }
+    
+    .about-content ul{
+      list-style:none;
+      padding-right:0;
+      margin:20px 0;
+    }
+    
+    .about-content li{
+      padding:12px 0 12px 40px;
+      position:relative;
+      border-bottom:1px solid rgba(255,255,255,0.1);
+    }
+    
+    .about-content li::before{
+      content:'◆';
+      position:absolute;
+      right:0;
+      color:var(--accent-light);
+      font-size:20px;
+    }
+    
+    .report-section{
+      margin-top:40px;
+      padding:32px;
+      background:linear-gradient(135deg, rgba(37, 211, 102, 0.1), rgba(16, 185, 129, 0.05));
+      border-radius:16px;
+      border:2px solid rgba(16, 185, 129, 0.3);
+    }
+    
+    .report-section h3{
+      font-size:26px;
+      color:#10b981;
+      margin-bottom:20px;
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+    
+    .report-section-content{
+      color:rgba(255,255,255,0.95);
+      line-height:1.9;
+      font-size:16px;
+    }
+    
+    .report-highlight{
+      margin-top:20px;
+      padding:16px;
+      background:rgba(16, 185, 129, 0.15);
+      border-radius:10px;
+      border-right:4px solid #10b981;
+      color:#d1fae5;
+      font-weight:600;
+    }
+    
+    footer{
+      margin:60px 0 30px;
+      text-align:center;
+      padding:30px;
+      background:linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,0.08);
+    }
+    
+    .footer-content{
+      color:rgba(255,255,255,0.95);
+      font-size:16px;
+      font-weight:500;
+    }
+    
+    .footer-content a{
+      color:#c7b3ff;
+      text-decoration:none;
+      font-weight:800;
+      transition:color 0.3s ease;
+    }
+    
+    .footer-content a:hover{
+      color:#fff;
+    }
+    
+    .whatsapp{
+      position:fixed;
+      left:30px;
+      bottom:30px;
+      background:linear-gradient(135deg, #25D366, #128C7E);
+      color:white;
+      border-radius:50%;
+      width:70px;
+      height:70px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:32px;
+      box-shadow:0 10px 30px rgba(37, 211, 102, 0.4);
+      z-index:999;
+      transition:all 0.3s ease;
+      animation:bounce 2s infinite;
+    }
+    
+    @keyframes bounce{
+      0%,100%{transform:translateY(0)}
+      50%{transform:translateY(-10px)}
+    }
+    
+    .whatsapp:hover{
+      transform:scale(1.1) translateY(-5px);
+      box-shadow:0 15px 40px rgba(37, 211, 102, 0.5);
+    }
+    
+    .loading{
+      display:none;
+      text-align:center;
+      padding:40px;
+    }
+    
+    .spinner{
+      width:50px;
+      height:50px;
+      margin:0 auto;
+      border:4px solid rgba(124, 58, 237, 0.2);
+      border-top-color:var(--accent);
+      border-radius:50%;
+      animation:spin 1s linear infinite;
+    }
+    
+    @keyframes spin{
+      to{transform:rotate(360deg)}
+    }
+    
+    @media(max-width:1200px){
+      .hero{grid-template-columns:1fr;gap:40px}
+      .stats-section{grid-template-columns:repeat(2, 1fr)}
+    }
+    
+    @media(max-width:768px){
+      header{
+        flex-direction:column;
+        align-items:flex-start;
+        padding:20px;
+      }
+      .hero h1{font-size:36px}
+      .features-grid{grid-template-columns:1fr}
+      .stats-section{grid-template-columns:1fr}
+      .about{padding:30px 20px}
+      .card{padding:24px}
+      .whatsapp{width:60px;height:60px;font-size:28px;left:20px;bottom:20px}
+    }
+  </style>
+</head>
+<body>
+
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo-container">
+          <svg class="logo-svg" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="g1" x1="0" x2="1" y1="0" y2="1">
+                <stop offset="0" stop-color="#7c3aed"/>
+                <stop offset="1" stop-color="#6366f1"/>
+              </linearGradient>
+              <filter id="glow">
+                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                <feMerge>
+                  <feMergeNode in="coloredBlur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+            </defs>
+            <path fill="url(#g1)" d="M60 6c-9.6 0-28 8-28 8v26c0 27 28 44 28 44s28-17 28-44V14s-18.4-8-28-8z" filter="url(#glow)"/>
+            <path fill="#fff" d="M48 58l6.5 6L74 46" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <div class="brand-title">TrustCheck — مُعين</div>
+          <div class="brand-sub">نظام التحقق الذكي من أرقام الهاتف</div>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <div class="supervisor-name">تحت إشراف: المهندس فارس حسن</div>
+        <div class="supervisor-title">معك لبناء مجتمع آمن وموثوق</div>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="hero-left">
+        <h1>تحقق من أرقام الهاتف بثقة وأمان</h1>
+        <p class="hero-subtitle">
+          منصة متطورة للتحقق من أرقام الهاتف وحمايتك من المحتالين والمزعجين. نستخدم تقنيات ذكية لتطبيع الأرقام ومطابقتها بدقة عالية.
+        </p>
+        
+        <div class="features-grid">
+          <div class="feature-item">
+            <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+            <div class="feature-text">حماية متقدمة</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+            <div class="feature-text">بحث سريع</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+            <div class="feature-text">تحليل دقيق</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon"><i class="fas fa-lock"></i></div>
+            <div class="feature-text">خصوصية تامة</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="search-container">
+        <div class="card">
+          <div class="search-label">
+            <i class="fas fa-search"></i>
+            ابحث عن رقم
+          </div>
+          <div class="input-wrapper">
+            <i class="fas fa-phone input-icon"></i>
+            <input type="text" id="inputArea" class="big-input" placeholder="+966595715358 أو 0595715358" />
+          </div>
+          <div class="hint">
+            <i class="fas fa-info-circle"></i>
+            أدخل رقم واحد للبحث. النظام يدعم جميع الصيغ ويطبّع الأرقام تلقائياً.
+          </div>
+          
+          <button class="btn" onclick="processSearch()">
+            <i class="fas fa-search"></i>
+            تحقّق الآن
+          </button>
+
+          <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="margin-top:16px;color:var(--muted)">جاري البحث...</p>
+          </div>
+
+          <div class="results" id="results"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats-section">
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-users"></i></div>
+        <div class="stat-number" id="totalChecks">0</div>
+        <div class="stat-label">عمليات فحص</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-shield-check"></i></div>
+        <div class="stat-number" id="totalReports">0</div>
+        <div class="stat-label">بلاغات موثقة</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-clock"></i></div>
+        <div class="stat-number">24/7</div>
+        <div class="stat-label">متاح دائماً</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-globe"></i></div>
+        <div class="stat-number">عالمي</div>
+        <div class="stat-label">جميع الدول</div>
+      </div>
+    </section>
+
+    <section class="about">
+      <h2><i class="fas fa-lightbulb" style="margin-left:12px"></i>رؤيتنا ورسالتنا</h2>
+      <div class="about-content">
+        <p style="font-size:18px;margin-bottom:20px;font-weight:500">
+          نسعى من خلال <strong>TrustCheck — مُعين</strong> إلى بناء منظومة مجتمعية شاملة تعزز الأمان والثقة في التعاملات اليومية.
+        </p>
+        
+        <ul>
+          <li>دقة وسهولة الوصول إلى المعلومات الموثوقة المتعلقة بأرقام الهاتف</li>
+          <li>تطبيع الأرقام بتقنيات متقدمة لتقليل الأخطاء الناتجة عن اختلاف الصيغ ورموز الدول</li>
+          <li>تمكين المستخدمين من الإبلاغ المسئول والمحايد عن السلوكيات المسيئة أو الاحتيالية</li>
+          <li>حماية خصوصية جميع المستخدمين والالتزام الصارم بالقوانين والمعايير الأخلاقية</li>
+        </ul>
+
+        <div style="margin-top:40px;padding:32px;background:linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.05));border-radius:16px;border:2px solid rgba(59, 130, 246, 0.3)">
+          <h3 style="font-size:28px;color:#3b82f6;margin-bottom:20px;display:flex;align-items:center;gap:12px">
+            <i class="fas fa-balance-scale"></i>
+            مبادئ العدالة والمساواة
+          </h3>
+          <div style="color:rgba(255,255,255,0.95);line-height:2;font-size:17px">
+            <p style="margin-bottom:20px;font-weight:600;font-size:19px">
+              <strong>نؤكد بكل وضوح وشفافية:</strong>
+            </p>
+            
+            <div style="background:rgba(59, 130, 246, 0.08);padding:20px;border-radius:12px;margin:20px 0;border-right:4px solid #3b82f6">
+              <p style="margin-bottom:16px;font-size:18px;font-weight:700;color:#60a5fa">
+                ✦ الجميع سواسية أمام نظامنا - لا تمييز لأي سبب كان
+              </p>
+              <ul style="list-style:none;padding:0">
+                <li style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.1)">
+                  <i class="fas fa-check-circle" style="color:#10b981;margin-left:10px"></i>
+                  لا نفرق بين جنسية وأخرى - جميع البلاغات تُعامل بنفس المعايير
+                </li>
+                <li style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.1)">
+                  <i class="fas fa-check-circle" style="color:#10b981;margin-left:10px"></i>
+                  لا ننحاز لأي شخص بسبب معرفة شخصية أو مصلحة مادية
+                </li>
+                <li style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.1)">
+                  <i class="fas fa-check-circle" style="color:#10b981;margin-left:10px"></i>
+                  لا نقبل أي ضغوط أو وساطات لتغيير الحقائق
+                </li>
+                <li style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.1)">
+                  <i class="fas fa-check-circle" style="color:#10b981;margin-left:10px"></i>
+                  جميع القرارات تُبنى على الأدلة الواضحة والموثقة فقط
+                </li>
+                <li style="padding:10px 0">
+                  <i class="fas fa-check-circle" style="color:#10b981;margin-left:10px"></i>
+                  المساواة التامة بين جميع المستخدمين بغض النظر عن أي عوامل خارجية
+                </li>
+              </ul>
+            </div>
+
+            <div style="background:rgba(236, 72, 153, 0.08);padding:20px;border-radius:12px;margin:20px 0;border-right:4px solid #ec4899">
+              <p style="font-size:18px;font-weight:700;color:#f9a8d4;margin-bottom:12px">
+                <i class="fas fa-heart" style="margin-left:8px"></i>
+                غايتنا الوحيدة:
+              </p>
+              <p style="font-size:17px;line-height:1.9">
+                <strong>لا نبتغي من هذا العمل إلا فضل الله ومرضاته، ومساعدة الناس وحمايتهم من الأذى.</strong>
+                نؤمن بأن العدل أساس الأمان، وأن المساواة حق لكل إنسان. عملنا هذا خالص لوجه الله تعالى، 
+                نسأل الله أن يتقبله منا وأن ينفع به الناس.
+              </p>
+            </div>
+
+            <div style="text-align:center;margin-top:24px;padding:20px;background:rgba(16, 185, 129, 0.08);border-radius:12px">
+              <p style="font-size:19px;font-weight:700;color:#6ee7b7;line-height:1.8">
+                "وَلَا يَجْرِمَنَّكُمْ شَنَآنُ قَوْمٍ عَلَىٰ أَلَّا تَعْدِلُوا ۚ اعْدِلُوا هُوَ أَقْرَبُ لِلتَّقْوَىٰ"
+              </p>
+              <p style="font-size:15px;color:rgba(255,255,255,0.8);margin-top:8px">
+                سورة المائدة - آية 8
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="report-section">
+          <h3><i class="fas fa-bullhorn"></i> كيفية الإبلاغ عن رقم مشبوه</h3>
+          <div class="report-section-content">
+            <p style="margin-bottom:20px">
+              لضمان مصداقية البلاغات وحماية حقوق الجميع بعدالة تامة، نطلب منك التواصل معنا عبر واتساب مع إرفاق:
+            </p>
+            <ul class="report-list">
+              <li><strong>الرقم المُبلّغ عنه</strong> كاملاً مع رمز الدولة</li>
+              <li><strong>سبب البلاغ المفصّل:</strong> (احتيال، مضايقات، إساءة، ابتزاز، إلخ)</li>
+              <li><strong>الأدلة الكاملة والواضحة:</strong> لقطات شاشة للمحادثات، سجلات المكالمات، تسجيلات صوتية (إن وُجدت)</li>
+              <li><strong>الحالة المطلوبة:</strong> تحديد التصنيف الدقيق (نصاب، قليل أدب، مضايقات، إلخ)</li>
+              <li><strong>تاريخ الحادثة</strong> وأي تفاصيل إضافية مهمة</li>
+            </ul>
+            <div class="report-highlight">
+              <i class="fas fa-exclamation-triangle" style="margin-left:8px"></i>
+              <strong>تنويه هام:</strong> سيتم مراجعة جميع البلاغات يدوياً وبدقة عالية قبل اعتمادها. نلتزم بالعدل المطلق 
+              ولا نقبل أي بلاغ دون أدلة واضحة وموثقة، بغض النظر عن هوية المُبلّغ أو المُبلّغ عنه.
+            </div>
+            <div style="text-align:center;margin-top:24px">
+              <a href="https://wa.me/201008627292?text=السلام%20عليكم%20ورحمة%20الله%20وبركاته%0A%0Aأريد%20الإبلاغ%20عن%20رقم%20مشبوه%0A%0Aالرقم%20المُبلّغ%20عنه:%20%0A%0Aسبب%20البلاغ:%20%0A%0Aالحالة%20المطلوبة:%20%0A%0A(يرجى%20إرفاق%20جميع%20الأدلة%20الواضحة%20والموثقة)" target="_blank" class="report-btn">
+                <i class="fab fa-whatsapp"></i>
+                ابدأ الإبلاغ عبر واتساب
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="footer-content">
+        <p style="margin-bottom:12px;font-size:18px">
+          <strong>TrustCheck — مُعين</strong> | الموقع بإشراف <strong>المهندس فارس حسن</strong>
+        </p>
+        <p style="margin-bottom:16px">
+          للتواصل والاستفسارات والبلاغات: 
+          <a href="https://wa.me/201008627292" target="_blank">+201008627292</a>
+        </p>
+        <p style="font-size:14px;color:rgba(255,255,255,0.7)">
+          <i class="fas fa-heart" style="color:#ec4899;margin:0 6px"></i>
+          نعمل بإخلاص لخدمة المجتمع وحمايته - لا نبتغي إلا فضل الله
+          <i class="fas fa-heart" style="color:#ec4899;margin:0 6px"></i>
+        </p>
+      </div>
+    </footer>
+  </div>
+
+  <a class="whatsapp" href="https://wa.me/201008627292?text=السلام%20عليكم%0A%0Aأريد%20الاستفسار%20عن%20خدمات%20TrustCheck" target="_blank" aria-label="تواصل عبر واتساب">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+
+  <script>
+    const SUFFIX_MATCH_LENGTH = 9;
+    let totalChecksCount = 0;
+
+    function loadData() {
+      const raw = localStorage.getItem('trustcheck_reports');
+      let local = [];
+      try { local = raw ? JSON.parse(raw) : []; } catch(e) { local = []; }
+      return local.map(item => ({ ...item, normalized: normalizeDigits(item.number) }));
+    }
+
+    function normalizeDigits(input) {
+      if (!input) return "";
+      const digits = String(input).replace(/\D+/g, '');
+      return digits.replace(/^00/, '');
+    }
+
+    function isMatch(normalizedStored, normalizedQuery) {
+      if (!normalizedStored || !normalizedQuery) return false;
+      if (normalizedStored === normalizedQuery) return true;
+      return normalizedStored.slice(-SUFFIX_MATCH_LENGTH) === normalizedQuery.slice(-SUFFIX_MATCH_LENGTH);
+    }
+
+    function processSearch() {
+      const raw = document.getElementById('inputArea').value.trim();
+      const resEl = document.getElementById('results');
+      const loadingEl = document.getElementById('loading');
+      
+      resEl.innerHTML = '';
+
+      if (!raw) {
+        resEl.innerHTML = `
+          <div class="result-card notfound">
+            <div class="result-head">
+              <div class="num"><i class="fas fa-info-circle"></i> من فضلك أدخل رقماً للبحث</div>
+            </div>
+          </div>`;
+        return;
+      }
+
+      loadingEl.style.display = 'block';
+      
+      setTimeout(() => {
+        const data = loadData();
+        const norm = normalizeDigits(raw);
+        
+        if (!norm) {
+          resEl.innerHTML = `
+            <div class="result-card notfound">
+              <div class="result-head">
+                <div class="num"><i class="fas fa-exclamation-triangle"></i> لم نتمكن من تفسير الرقم</div>
+              </div>
+              <div class="note">يرجى إدخال رقم هاتف صحيح يحتوي على أرقام.</div>
+            </div>`;
+          loadingEl.style.display = 'none';
+          return;
+        }
+
+        const matches = data.filter(d => isMatch(d.normalized, norm));
+
+        if (matches.length) {
+          matches.forEach(m => {
+            resEl.innerHTML += renderMatchCard(raw, norm, m);
+          });
+        } else {
+          resEl.innerHTML += renderNotFoundCard(raw, norm);
+        }
+
+        loadingEl.style.display = 'none';
+        resEl.scrollIntoView({behavior:'smooth', block:'start'});
+        
+        totalChecksCount++;
+        updateStats();
+      }, 800);
+    }
+
+    function renderMatchCard(raw, norm, item) {
+      const statusClass = (item.status === 'نصاب') ? 'bad' : 
+                         (item.status === 'قليل الأدب' || item.status === 'مضايقات') ? 'warn' : 'ok';
+      
+      const statusIcon = (item.status === 'نصاب') ? 'fas fa-exclamation-circle' : 
+                        (item.status === 'قليل الأدب' || item.status === 'مضايقات') ? 'fas fa-exclamation-triangle' : 
+                        'fas fa-check-circle';
+      
+      return `
+        <div class="result-card">
+          <div class="result-head">
+            <div class="num">
+              <i class="fas fa-phone"></i>
+              ${escapeHtml(raw)}
+              <span class="normalized">${norm}</span>
+            </div>
+            <div class="status ${statusClass}">
+              <i class="${statusIcon}"></i>
+              ${escapeHtml(item.status)}
+            </div>
+          </div>
+          <div class="note">
+            <strong>سبب الإضافة:</strong>
+            ${escapeHtml(item.note)}
+          </div>
+          <div class="meta">
+            <i class="fas fa-calendar-alt"></i>
+            تمت الإضافة: ${formatDate(item.createdAt)}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderNotFoundCard(raw, norm) {
+      return `
+        <div class="result-card notfound">
+          <div class="result-head">
+            <div class="num">
+              <i class="fas fa-phone"></i>
+              ${escapeHtml(raw)}
+              <span class="normalized">${norm}</span>
+            </div>
+            <div class="status ok">
+              <i class="fas fa-check-circle"></i>
+              غير مبلّغ
+            </div>
+          </div>
+          <div class="note">
+            <strong>النتيجة:</strong> لا يوجد أي سجل لهذا الرقم في قاعدة بياناتنا. هذا مؤشر جيد!
+          </div>
+          
+          <div class="report-box">
+            <div class="report-title">
+              <i class="fas fa-shield-alt"></i>
+              هل واجهت مشكلة مع هذا الرقم؟
+            </div>
+            <p style="color:#047857;font-size:14px;margin:12px 0;line-height:1.7">
+              لإضافة بلاغ رسمي وموثق، يُرجى التواصل معنا عبر واتساب مع إرفاق جميع الأدلة الواضحة والموثقة.
+              نؤكد لك أننا نعامل جميع البلاغات بعدالة ومساواة تامة دون أي تحيز.
+            </p>
+            <ul class="report-list">
+              <li>الرقم المُبلّغ عنه كاملاً</li>
+              <li>سبب البلاغ بالتفصيل</li>
+              <li>الأدلة الواضحة (لقطات شاشة، تسجيلات)</li>
+              <li>الحالة المطلوبة للتصنيف</li>
+            </ul>
+            <a href="https://wa.me/201008627292?text=السلام%20عليكم%0A%0Aأريد%20الإبلاغ%20عن%20رقم:%20${encodeURIComponent(raw)}%0A%0Aسبب%20البلاغ:%20%0A%0A(يرجى%20إرفاق%20جميع%20الأدلة)" target="_blank" class="report-btn">
+              <i class="fab fa-whatsapp"></i>
+              تواصل للإبلاغ عبر واتساب
+            </a>
+          </div>
+        </div>
+      `;
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return 'غير محدد';
+      const d = new Date(dateStr);
+      return d.toLocaleString('ar-EG', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric', 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      });
+    }
+
+    function escapeHtml(str){ 
+      return String(str || '')
+        .replaceAll('&','&amp;')
+        .replaceAll('<','&lt;')
+        .replaceAll('>','&gt;')
+        .replaceAll('"','&quot;'); 
+    }
+
+    function updateStats() {
+      document.getElementById('totalChecks').textContent = totalChecksCount.toLocaleString('ar-EG');
+      const data = loadData();
+      document.getElementById('totalReports').textContent = data.length.toLocaleString('ar-EG');
+    }
+
+    document.getElementById('inputArea').addEventListener('keydown', function(e){
+      if(e.key === 'Enter'){ processSearch(); }
+    });
+
+    updateStats();
+  </script>
+</body>
+</html>
